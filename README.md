@@ -4,4 +4,4 @@ This project is developed using Java Swings/AWT with MySQL database. (Developed 
 <br>
 Here I am showing the Application walkthrough:<br>
 -> Upon Starting the application:<br>
-![](../../tree/master/images/img1.png)
+![img1](../../tree/master/images/img1.PNG?raw=true)
