@@ -12,7 +12,7 @@ Here's the basic walkthrough of the Application:<br><br>
 ![](https://raw.githubusercontent.com/Lakshay-Dhingra/Student-Management-System/master/images/img2.PNG)
 <br><br>
 
--> Username and Password has some validation constarints.<br><br>
+-> The application has some validation checks with user inputs.<br><br>
 ![](https://raw.githubusercontent.com/Lakshay-Dhingra/Student-Management-System/master/images/img3.PNG)
 <br><br>
 
