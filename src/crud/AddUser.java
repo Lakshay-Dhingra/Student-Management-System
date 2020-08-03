@@ -2,20 +2,13 @@ package crud;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.sql.*;
 
-public class Login extends BasicFrame
+public class AddUser extends BasicFrame
 {
 	private static final long serialVersionUID = 1L;
-	public Login()
+	public AddUser()
 	{
 		makeVisible();
-		Connection con=databases.Connect.getConnection();
-		if(con==null)
-		{
-			JOptionPane.showMessageDialog(this,"No Database found! Login as Admin and setup Database to use the Application.");
-		}
-		
 	}
 	public void addMainSection()
 	{
@@ -26,7 +19,7 @@ public class Login extends BasicFrame
 				//Main Heading
 				JPanel main_heading_panel=new JPanel();
 				main_heading_panel.setLayout(new FlowLayout(FlowLayout.CENTER,0,20));
-					JTextField main_heading=new JTextField("USER LOGIN");
+					JTextField main_heading=new JTextField("ADD USER");
 					main_heading.setFont(new Font(Font.MONOSPACED,Font.BOLD,30));
 					main_heading.setForeground(Color.DARK_GRAY);
 					main_heading.setBackground(main_section.getBackground());
@@ -63,33 +56,11 @@ public class Login extends BasicFrame
 						password_input.setForeground(Color.GRAY);
 						password_panel.add(password_input);
 					password_panel.setVisible(true);
-					main_para_panel.add(password_panel);
-					
-					JPanel usertype_panel=new JPanel();
-					usertype_panel.setLayout(new FlowLayout(FlowLayout.CENTER,25,0));
-						JLabel usertype=new JLabel("Login As: ");
-						usertype.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,24));
-						usertype.setForeground(Color.DARK_GRAY);
-						usertype_panel.add(usertype);
-						
-						ButtonGroup bg=new ButtonGroup();
-						JRadioButton r1=new JRadioButton("User",true);	//this button is selected by default
-						r1.setFont(usertype.getFont());
-						r1.setForeground(usertype.getForeground());
-						JRadioButton r2=new JRadioButton("Admin");
-						r2.setFont(usertype.getFont());
-						r2.setForeground(usertype.getForeground());
-						bg.add(r1);bg.add(r2);
-						usertype_panel.add(r1);
-						usertype_panel.add(r2);
-						
-					usertype_panel.setVisible(true);
-					main_para_panel.add(usertype_panel);
-					
+					main_para_panel.add(password_panel);	
 					
 					JPanel button_panel=new JPanel();
 					button_panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,0));
-						JButton main_button=new JButton("Login");
+						JButton main_button=new JButton("Add User");
 						main_button.setFont(new Font(Font.MONOSPACED,Font.BOLD,24));
 						main_button.setForeground(main_heading.getForeground());
 							
@@ -102,29 +73,15 @@ public class Login extends BasicFrame
 											String un=user_input.getText();
 											if(un.length()>=5 && pw.length()>=5 && un.length()<=20 && pw.length()<=20)
 											{
-												if(r1.isSelected())	//User Login
+												if(databases.UserOperations.addUser(un, pw))
 												{
-													if(databases.ValidateLogin.authenticateUser(un,pw))
-													{
-														new SelectOperation();
-														dispose();
-													}
-													else
-													{
-														JOptionPane.showMessageDialog(main_section,"Incorrect Username or Password!");
-													}
+													JOptionPane.showMessageDialog(main_section,"User Successfully Added!");
+													new AddUser();
+													dispose();
 												}
-												else	//Admin Login
+												else
 												{
-													if(databases.ValidateLogin.authenticateAdmin(un,pw))
-													{
-														new AdminPage();
-														dispose();
-													}
-													else
-													{
-														JOptionPane.showMessageDialog(main_section,"Incorrect Username or Password!");
-													}
+													JOptionPane.showMessageDialog(main_section,"Some Problem Occurred while adding User.");
 												}
 											}
 											else
@@ -144,7 +101,7 @@ public class Login extends BasicFrame
 				//Footer Button
 				JPanel footer_button_panel=new JPanel();
 				footer_button_panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,0));
-					JButton footer_button=new JButton("Exit Application");
+					JButton footer_button=new JButton("Admin Dashboard");
 					footer_button.setFont(new Font(Font.MONOSPACED,Font.BOLD,24));
 					footer_button.setBackground(Color.WHITE);
 					footer_button.setForeground(main_heading.getForeground());
@@ -154,7 +111,7 @@ public class Login extends BasicFrame
 								{
 									public void actionPerformed(ActionEvent e)
 									{
-										new Welcome();
+										new AdminDashboard();
 										disposeWindow();
 									}
 								});

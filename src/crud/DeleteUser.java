@@ -1,22 +1,19 @@
 package crud;
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
-import java.sql.*;
+import javax.swing.table.JTableHeader;
 
-public class Login extends BasicFrame
+import java.awt.event.*;
+
+public class DeleteUser extends BasicFrame
 {
-	private static final long serialVersionUID = 1L;
-	public Login()
+private static final long serialVersionUID = 1L;
+	
+	public DeleteUser()
 	{
 		makeVisible();
-		Connection con=databases.Connect.getConnection();
-		if(con==null)
-		{
-			JOptionPane.showMessageDialog(this,"No Database found! Login as Admin and setup Database to use the Application.");
-		}
-		
 	}
+	
 	public void addMainSection()
 	{
 		JPanel main_section=new JPanel();
@@ -26,7 +23,7 @@ public class Login extends BasicFrame
 				//Main Heading
 				JPanel main_heading_panel=new JPanel();
 				main_heading_panel.setLayout(new FlowLayout(FlowLayout.CENTER,0,20));
-					JTextField main_heading=new JTextField("USER LOGIN");
+					JTextField main_heading=new JTextField("DELETE USER");
 					main_heading.setFont(new Font(Font.MONOSPACED,Font.BOLD,30));
 					main_heading.setForeground(Color.DARK_GRAY);
 					main_heading.setBackground(main_section.getBackground());
@@ -39,8 +36,9 @@ public class Login extends BasicFrame
 				//Main Para
 				JPanel main_para_panel=new JPanel();
 				main_para_panel.setLayout(new BoxLayout(main_para_panel,BoxLayout.Y_AXIS));
+					
 					JPanel username_panel=new JPanel();
-					username_panel.setLayout(new FlowLayout());
+					username_panel.setLayout(new FlowLayout(FlowLayout.RIGHT,80,0));
 						JLabel username=new JLabel("Username: ");
 						username.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,24));
 						username.setForeground(Color.GRAY);
@@ -51,45 +49,11 @@ public class Login extends BasicFrame
 						username_panel.add(user_input);
 					username_panel.setVisible(true);
 					main_para_panel.add(username_panel);
-					
-					JPanel password_panel=new JPanel();
-					password_panel.setLayout(new FlowLayout());
-						JLabel password=new JLabel("Password: ");
-						password.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,24));
-						password.setForeground(Color.GRAY);
-						password_panel.add(password);
-						JPasswordField password_input=new JPasswordField(20);
-						password_input.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,24));
-						password_input.setForeground(Color.GRAY);
-						password_panel.add(password_input);
-					password_panel.setVisible(true);
-					main_para_panel.add(password_panel);
-					
-					JPanel usertype_panel=new JPanel();
-					usertype_panel.setLayout(new FlowLayout(FlowLayout.CENTER,25,0));
-						JLabel usertype=new JLabel("Login As: ");
-						usertype.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,24));
-						usertype.setForeground(Color.DARK_GRAY);
-						usertype_panel.add(usertype);
-						
-						ButtonGroup bg=new ButtonGroup();
-						JRadioButton r1=new JRadioButton("User",true);	//this button is selected by default
-						r1.setFont(usertype.getFont());
-						r1.setForeground(usertype.getForeground());
-						JRadioButton r2=new JRadioButton("Admin");
-						r2.setFont(usertype.getFont());
-						r2.setForeground(usertype.getForeground());
-						bg.add(r1);bg.add(r2);
-						usertype_panel.add(r1);
-						usertype_panel.add(r2);
-						
-					usertype_panel.setVisible(true);
-					main_para_panel.add(usertype_panel);
-					
+				
 					
 					JPanel button_panel=new JPanel();
 					button_panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,0));
-						JButton main_button=new JButton("Login");
+						JButton main_button=new JButton("Delete User");
 						main_button.setFont(new Font(Font.MONOSPACED,Font.BOLD,24));
 						main_button.setForeground(main_heading.getForeground());
 							
@@ -98,38 +62,18 @@ public class Login extends BasicFrame
 									{
 										public void actionPerformed(ActionEvent e)
 										{
-											String pw=String.valueOf(password_input.getPassword());
+											
 											String un=user_input.getText();
-											if(un.length()>=5 && pw.length()>=5 && un.length()<=20 && pw.length()<=20)
+											
+											if(databases.UserOperations.deleteUser(un))
 											{
-												if(r1.isSelected())	//User Login
-												{
-													if(databases.ValidateLogin.authenticateUser(un,pw))
-													{
-														new SelectOperation();
-														dispose();
-													}
-													else
-													{
-														JOptionPane.showMessageDialog(main_section,"Incorrect Username or Password!");
-													}
-												}
-												else	//Admin Login
-												{
-													if(databases.ValidateLogin.authenticateAdmin(un,pw))
-													{
-														new AdminPage();
-														dispose();
-													}
-													else
-													{
-														JOptionPane.showMessageDialog(main_section,"Incorrect Username or Password!");
-													}
-												}
+												JOptionPane.showMessageDialog(main_section,"User "+un+" deleted Successfully!");
+												new DeleteUser();
+												dispose();
 											}
 											else
 											{
-												JOptionPane.showMessageDialog(main_section,"Username and Password must be between 5 to 20 characters.");
+												JOptionPane.showMessageDialog(main_section,"Couldn't delete the user!");
 											}
 										}
 									});
@@ -137,6 +81,56 @@ public class Login extends BasicFrame
 					button_panel.add(main_button);
 					button_panel.setVisible(true);
 					main_para_panel.add(button_panel);
+					
+					JPanel all_button_panel=new JPanel();
+					all_button_panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,0));
+						JButton all_main_button=new JButton("See All Users");
+						all_main_button.setFont(new Font(Font.MONOSPACED,Font.BOLD,24));
+						all_main_button.setForeground(main_heading.getForeground());
+							
+							//When Button is Pressed
+							all_main_button.addActionListener(new ActionListener()
+									{
+										public void actionPerformed(ActionEvent e)
+										{
+											String[][] ans=databases.UserOperations.allUsers();
+											if(ans==null)
+											{
+												JOptionPane.showMessageDialog(main_section,"Couldn't fetch user data!");
+											}
+											else if(ans.length==0)
+											{
+												JOptionPane.showMessageDialog(main_section,"No User Found!");
+											}
+											else
+											{												
+												JFrame search_frame=new JFrame();
+												Container c=search_frame.getContentPane();
+												c.setBackground(Color.WHITE);
+												search_frame.setLayout(new CardLayout(40,35));
+												search_frame.setSize(750,450);
+													String colname[]= {"Username","Password"};
+													JTable jt=new JTable(ans,colname);
+														jt.setEnabled(false);
+														jt.setRowHeight(30);
+														jt.setFont(new Font(Font.MONOSPACED,Font.PLAIN,18));
+														jt.setForeground(Color.DARK_GRAY);
+														JTableHeader jthead = jt.getTableHeader();
+														jthead.setFont(new Font(Font.MONOSPACED,Font.BOLD,18));
+														jthead.setForeground(Color.BLACK);
+														
+													JScrollPane jtsp=new JScrollPane(jt);
+														jtsp.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
+													search_frame.add(jtsp);
+												search_frame.setVisible(true);
+												setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+											}
+										}
+									});
+						
+					all_button_panel.add(all_main_button);
+					all_button_panel.setVisible(true);
+					main_para_panel.add(all_button_panel);
 				main_para_panel.setVisible(true);
 				main_section.add(main_para_panel);
 				//Main Para End
@@ -144,7 +138,7 @@ public class Login extends BasicFrame
 				//Footer Button
 				JPanel footer_button_panel=new JPanel();
 				footer_button_panel.setLayout(new FlowLayout(FlowLayout.CENTER,10,0));
-					JButton footer_button=new JButton("Exit Application");
+					JButton footer_button=new JButton("Admin Dashboard");
 					footer_button.setFont(new Font(Font.MONOSPACED,Font.BOLD,24));
 					footer_button.setBackground(Color.WHITE);
 					footer_button.setForeground(main_heading.getForeground());
@@ -154,7 +148,7 @@ public class Login extends BasicFrame
 								{
 									public void actionPerformed(ActionEvent e)
 									{
-										new Welcome();
+										new AdminDashboard();
 										disposeWindow();
 									}
 								});
