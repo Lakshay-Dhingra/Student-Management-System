@@ -2,6 +2,10 @@
 This is a basic student management application where one can manage students details.
 This project is developed using Java Swings/AWT with MySQL database. (Developed in Eclipse EE 2020.)
 <br><br>
+You can use the project using Student Management.jar
+<br><br>
+There are some changes and additions to the project, I'll update the README soon...
+<br><br>
 Here's the basic walkthrough of the Application:<br><br>
 
 -> Upon Starting the application:<br><br>
